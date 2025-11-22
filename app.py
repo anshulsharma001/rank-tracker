@@ -229,16 +229,20 @@ def upload_keywords():
 
 if __name__ == '__main__':
     import sys
+    import os
     
-    # Use port 8080 by default (5000/5001 are often used by AirPlay on macOS)
-    port = 8080
+    # Use PORT from environment (for Render/Heroku) or default to 8080
+    port = int(os.environ.get('PORT', 8080))
     
     # Allow port override via command line
     if len(sys.argv) > 1:
         try:
             port = int(sys.argv[1])
         except ValueError:
-            print(f"Invalid port number: {sys.argv[1]}. Using default port 5001.")
+            print(f"Invalid port number: {sys.argv[1]}. Using default port 8080.")
+    
+    # Disable debug mode in production
+    debug = os.environ.get('DEBUG', 'False').lower() == 'true'
     
     print("\n" + "="*60)
     print("Google Rank Tracking System - Web Interface")
@@ -247,5 +251,5 @@ if __name__ == '__main__':
     print("Starting web server...")
     print(f"Open your browser and go to: http://localhost:{port}")
     print("="*60 + "\n")
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=debug, host='0.0.0.0', port=port)
 

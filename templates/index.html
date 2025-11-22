@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Rank Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Google Rank Tracker</h1>
+            <p class="subtitle">Check where your website ranks on Google Search</p>
+        </header>
+
+        <main>
+            <!-- Input Form -->
+            <div class="card">
+                <h2>Check Rankings</h2>
+                <form id="rankForm">
+                    <div class="form-group">
+                        <label for="websiteUrl">Website URL *</label>
+                        <input 
+                            type="url" 
+                            id="websiteUrl" 
+                            name="websiteUrl" 
+                            placeholder="https://www.example.com" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keywords">Keywords *</label>
+                        <textarea 
+                            id="keywords" 
+                            name="keywords" 
+                            rows="4" 
+                            placeholder="Enter keywords, one per line&#10;Example:&#10;artificial intelligence tools&#10;AI software&#10;machine learning"
+                            required
+                        ></textarea>
+                        <small>Enter one keyword per line</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <select id="location" name="location">
+                            <option value="United States">United States</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Australia">Australia</option>
+                            <option value="India">India</option>
+                            <option value="Germany">Germany</option>
+                            <option value="France">France</option>
+                            <option value="Japan">Japan</option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="checkBtn" class="btn btn-primary">
+                            <span class="btn-text">Check Rankings</span>
+                            <span class="btn-loader" style="display: none;">⏳ Checking...</span>
+                        </button>
+                        <button type="button" id="uploadBtn" class="btn btn-secondary">
+                            📁 Upload CSV
+                        </button>
+                        <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="card" style="display: none;">
+                <h2>Results</h2>
+                <div id="resultsContainer"></div>
+            </div>
+
+            <!-- History Section -->
+            <div class="card">
+                <h2>View History</h2>
+                <div class="form-group">
+                    <input 
+                        type="text" 
+                        id="historyUrl" 
+                        placeholder="Filter by website URL (optional)"
+                        class="input-inline"
+                    >
+                    <input 
+                        type="text" 
+                        id="historyKeyword" 
+                        placeholder="Filter by keyword (optional)"
+                        class="input-inline"
+                    >
+                    <button type="button" id="loadHistoryBtn" class="btn btn-secondary">
+                        Load History
+                    </button>
+                </div>
+                <div id="historyContainer"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Google Rank Tracking System | Powered by SerpAPI</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
+
+

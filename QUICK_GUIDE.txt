@@ -1,0 +1,78 @@
+╔══════════════════════════════════════════════════════════════════╗
+║          HOW TO CHECK WEBSITE RANKING POSITIONS                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📋 WHAT YOU NEED:
+   • Website URL (e.g., https://www.example.com)
+   • Keywords to check (e.g., "AI tools", "machine learning")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 BASIC USAGE:
+
+   python3 main.py -u YOUR_WEBSITE_URL -k "YOUR KEYWORD"
+
+   Example:
+   python3 main.py -u https://www.example.com -k "artificial intelligence"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 WHAT HAPPENS:
+
+   1. System searches Google for your keyword
+   2. Scans top 100 search results
+   3. Finds where YOUR website appears
+   4. Shows you the position number
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ EXAMPLE RESULTS:
+
+   ✅ artificial intelligence: Position 4
+      → Your website is at position 4 (4th result on page 1)
+
+   ✅ AI tools: Position 12
+      → Your website is at position 12 (2nd result on page 2)
+
+   ⚠️  machine learning: > 100
+      → Your website is NOT in the top 100 results
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔢 POSITION NUMBERS:
+
+   Position 1-10   = Page 1 of Google results
+   Position 11-20  = Page 2 of Google results
+   Position 21-30  = Page 3 of Google results
+   ...
+   Position 91-100 = Page 10 of Google results
+   > 100           = Not in top 100 results
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 REAL EXAMPLES:
+
+   # Check single keyword
+   python3 main.py -u https://myblog.com -k "python tutorials"
+
+   # Check multiple keywords
+   python3 main.py -u https://myblog.com -k "python" "tutorials" "coding"
+
+   # Check from CSV file
+   python3 main.py -u https://myblog.com -f keywords_example.csv
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 ALL RESULTS ARE SAVED AUTOMATICALLY TO FIREBASE/GOOGLE SHEETS!
+
+   You can track:
+   • Ranking changes over time
+   • Historical data
+   • Multiple keywords
+   • Different dates
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For more details, see: HOW_TO_USE.md
+
+

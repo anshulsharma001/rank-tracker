@@ -56,8 +56,40 @@ class GoogleDocsManager:
         
         # Load existing token
         if os.path.exists(token_file):
-            with open(token_file, 'rb') as token:
-                creds = pickle.load(token)
+            try:
+                with open(token_file, 'rb') as token:
+                    # Check if file is valid pickle by reading first few bytes
+                    first_bytes = token.read(3)
+                    token.seek(0)  # Reset to beginning
+                    
+                    # Check for common non-pickle file signatures
+                    if first_bytes.startswith(b'\xef\xbb\xbf'):  # UTF-8 BOM
+                        raise ValueError(
+                            f"token.pickle file appears to be corrupted (UTF-8 BOM detected). "
+                            f"Please regenerate token.pickle locally and re-upload to Render."
+                        )
+                    if first_bytes.startswith(b'{') or first_bytes.startswith(b'['):  # JSON file
+                        raise ValueError(
+                            f"token.pickle appears to be a JSON file, not a pickle file. "
+                            f"Please regenerate token.pickle locally and re-upload to Render."
+                        )
+                    
+                    creds = pickle.load(token)
+            except (pickle.UnpicklingError, EOFError, ValueError) as e:
+                # Invalid pickle file - need to regenerate
+                error_msg = str(e)
+                if 'invalid load key' in error_msg.lower() or '\xef' in error_msg:
+                    raise ValueError(
+                        f"token.pickle file is corrupted or invalid: {error_msg}\n"
+                        f"This usually happens when the file is uploaded incorrectly to Render.\n\n"
+                        f"To fix:\n"
+                        f"1. Delete the corrupted token.pickle from Render\n"
+                        f"2. Regenerate it locally: python3 -c 'from google_docs_manager import GoogleDocsManager; GoogleDocsManager()'\n"
+                        f"3. Upload the new token.pickle to Render as a binary/secret file (not text)\n"
+                        f"4. Make sure to upload it in binary mode (not as text content)"
+                    )
+                else:
+                    raise
         
         # If no valid credentials, get new ones
         if not creds or not creds.valid:

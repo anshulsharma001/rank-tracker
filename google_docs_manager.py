@@ -64,6 +64,23 @@ class GoogleDocsManager:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
+                # Check if we're in a cloud environment (no browser available)
+                is_cloud_env = os.getenv('RENDER') or os.getenv('HEROKU') or os.getenv('RAILWAY_ENVIRONMENT')
+                
+                if is_cloud_env and not os.path.exists(token_file):
+                    # On cloud platforms, we can't open a browser - token.pickle must exist
+                    raise FileNotFoundError(
+                        f"Token file not found on cloud platform: {token_file}\n"
+                        "OAuth authentication requires a browser, which is not available on cloud servers.\n\n"
+                        "To fix this:\n"
+                        "1. Authenticate locally on your machine:\n"
+                        "   python3 -c 'from google_docs_manager import GoogleDocsManager; GoogleDocsManager()'\n"
+                        "2. This will create token.pickle file locally\n"
+                        "3. Upload token.pickle to Render as a 'Secret File' in Environment tab\n"
+                        "4. Redeploy your service\n"
+                        f"Also make sure credentials.json is uploaded as a secret file at /etc/secrets/credentials.json"
+                    )
+                
                 # Check if credentials are provided via environment variable (for cloud deployments)
                 credentials_json = os.getenv('GOOGLE_CREDENTIALS_JSON')
                 
@@ -80,14 +97,14 @@ class GoogleDocsManager:
                     try:
                         flow = InstalledAppFlow.from_client_secrets_file(
                             temp_creds_file, self.SCOPES)
-                        # Try to use local server first (for local dev)
-                        # For cloud, this won't work, so we need token.pickle pre-created
-                        import sys
-                        if sys.platform != 'darwin' and sys.platform != 'linux' and sys.platform != 'win32':
-                            # If we're on a server, try console flow (but it needs token.pickle)
-                            # For now, use local server and log instructions
-                            print("NOTE: First authentication on server requires manual setup.")
-                            print("Run this locally first to generate token.pickle, then upload it.")
+                        
+                        if is_cloud_env:
+                            # On cloud, we can't use browser - must have token.pickle
+                            raise FileNotFoundError(
+                                "Cannot authenticate on cloud platform - browser not available.\n"
+                                "Please generate token.pickle locally and upload it as a secret file."
+                            )
+                        
                         creds = flow.run_local_server(port=0)
                     finally:
                         # Clean up temp file
@@ -97,6 +114,14 @@ class GoogleDocsManager:
                     # Use credentials from file (local development or Render secret file)
                     flow = InstalledAppFlow.from_client_secrets_file(
                         self.credentials_file, self.SCOPES)
+                    
+                    if is_cloud_env:
+                        # On cloud, we can't use browser - must have token.pickle
+                        raise FileNotFoundError(
+                            "Cannot authenticate on cloud platform - browser not available.\n"
+                            "Please generate token.pickle locally and upload it as a secret file."
+                        )
+                    
                     creds = flow.run_local_server(port=0)
                 else:
                     # Check if credentials_file is actually JSON content (misconfiguration)

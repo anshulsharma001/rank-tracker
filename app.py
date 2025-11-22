@@ -123,7 +123,27 @@ def get_history():
     """API endpoint to get ranking history"""
     try:
         # History feature reads from Google Docs/Sheets
-        storage_manager = StorageManager()
+        try:
+            storage_manager = StorageManager()
+        except FileNotFoundError as e:
+            # Handle missing token.pickle on cloud platforms
+            error_msg = str(e)
+            if 'Token file not found on cloud platform' in error_msg or 'Cannot authenticate on cloud platform' in error_msg:
+                return jsonify({
+                    'success': False,
+                    'error': 'Authentication token not found. Please upload token.pickle to Render as a secret file. See deployment guide for instructions.',
+                    'details': error_msg,
+                    'results': [],
+                    'count': 0
+                }), 500
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': str(e),
+                    'results': [],
+                    'count': 0
+                }), 500
+        
         all_results = storage_manager.get_all_results()
         
         # Parse results (skip header row)

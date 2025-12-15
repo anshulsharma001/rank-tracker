@@ -125,7 +125,7 @@ def get_history():
         # History feature reads from Google Docs/Sheets
         try:
             storage_manager = StorageManager()
-        except FileNotFoundError as e:
+        except (FileNotFoundError, ValueError) as e:
             # Handle missing token.pickle on cloud platforms
             error_msg = str(e)
             if 'Token file not found on cloud platform' in error_msg or 'Cannot authenticate on cloud platform' in error_msg:
@@ -144,7 +144,19 @@ def get_history():
                     'count': 0
                 }), 500
         
-        all_results = storage_manager.get_all_results()
+        try:
+            all_results = storage_manager.get_all_results()
+        except Exception as e:
+            # Handle authentication errors
+            error_str = str(e)
+            if 'invalid_grant' in error_str.lower() or 'Bad Request' in error_str:
+                return jsonify({
+                    'success': False,
+                    'error': 'Authentication expired. Please re-authenticate by running a rank check first, or delete token.pickle and try again.',
+                    'results': [],
+                    'count': 0
+                }), 401
+            raise
         
         # Parse results (skip header row)
         if len(all_results) <= 1:

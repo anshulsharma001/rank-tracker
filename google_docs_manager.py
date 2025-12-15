@@ -94,7 +94,22 @@ class GoogleDocsManager:
         # If no valid credentials, get new ones
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
+                try:
+                    creds.refresh(Request())
+                except Exception as refresh_error:
+                    # Token refresh failed (invalid_grant, etc.) - need to re-authenticate
+                    error_str = str(refresh_error)
+                    print(f"Token refresh failed: {error_str}")
+                    print("The authentication token has expired. Re-authenticating...")
+                    # Delete the old token file to force re-authentication
+                    if os.path.exists(token_file):
+                        try:
+                            os.remove(token_file)
+                            print("Deleted expired token.pickle")
+                        except:
+                            pass
+                    # Set creds to None to trigger new authentication flow
+                    creds = None
             else:
                 # Check if we're in a cloud environment (no browser available)
                 is_cloud_env = os.getenv('RENDER') or os.getenv('HEROKU') or os.getenv('RAILWAY_ENVIRONMENT')

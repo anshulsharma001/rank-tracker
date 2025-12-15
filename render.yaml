@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: rank-tracker
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python3 app.py 8080
+    envVars:
+      - key: SERPAPI_KEY
+        sync: false
+      - key: STORAGE_TYPE
+        value: docs
+      - key: GOOGLE_DOCS_DOCUMENT_ID
+        sync: false
+      - key: GOOGLE_SHEETS_CREDENTIALS_FILE
+        value: /etc/secrets/credentials.json
+    secretFiles:
+      - source: credentials
+        destination: /etc/secrets/credentials.json
+      - source: token
+        destination: /etc/secrets/token.pickle
+

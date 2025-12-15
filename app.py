@@ -156,6 +156,14 @@ def get_history():
                     'results': [],
                     'count': 0
                 }), 401
+            elif 'corrupted' in error_str.lower() or 'invalid load key' in error_str.lower() or '\xef' in error_str:
+                return jsonify({
+                    'success': False,
+                    'error': 'The authentication token file is corrupted. This usually happens when token.pickle was uploaded as text instead of binary to Render. See DEPLOYMENT.md for instructions on how to fix this.',
+                    'details': str(e),
+                    'results': [],
+                    'count': 0
+                }), 500
             raise
         
         # Parse results (skip header row)
